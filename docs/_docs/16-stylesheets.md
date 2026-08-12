@@ -314,14 +314,14 @@ $base04: #000000;
 $base05: #101010;
 $base06: #151515;
 $base07: #202020;
-/* $base08: #ff0086; */
-$base08: #00c918;
+$base08: #ff0086;
 $base09: #fd8900;
 $base0a: #aba800;
 $base0b: #00c918;
 $base0c: #1faaaa;
 $base0d: #3777e6;
-$base0e: #ad00a1;
+/* $base0e: #ad00a1; */
+$base0e: #00c918;
 $base0f: #cc6633;
 ```
 
