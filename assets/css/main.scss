@@ -7,18 +7,3 @@ search: false
 
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
 @import "minimal-mistakes"; // main partials
-
-/* Site-wide link colors. Keep this after the remote theme imports so it is
-   emitted after the theme's component styles. */
-@media screen {
-  a,
-  a:visited {
-    color: #90ee90 !important;
-  }
-
-  a:hover,
-  a:active,
-  a:focus {
-    color: #b3f4b3 !important;
-  }
-}
