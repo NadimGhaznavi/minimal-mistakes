@@ -11,27 +11,12 @@ $code-background-color: mix(#000, $background-color, 15%) !default;
 $code-background-color-dark: mix(#000, $background-color, 20%) !default;
 $form-background-color: mix(#000, $background-color, 15%) !default;
 $footer-background-color: mix($primary-color, #000, 10%) !default;
-$link-color: #90ee90 !default;
+$link-color: $primary-color !default;
 $link-color-hover: mix(#fff, $link-color, 25%) !default;
-$link-color-visited: $link-color !default;
+$link-color-visited: mix(#000, $link-color, 25%) !default;
 $masthead-link-color: $text-color !default;
 $masthead-link-color-hover: mix(#000, $text-color, 20%) !default;
 $navicon-link-color-hover: mix(#000, $background-color, 30%) !default;
-
-/* Use the Neon link palette for every HTML anchor, including components that
-   define their own link colors. */
-@media screen {
-  a,
-  a:visited {
-    color: $link-color !important;
-  }
-
-  a:hover,
-  a:active,
-  a:focus {
-    color: $link-color-hover !important;
-  }
-}
 
 /* notices */
 $notice-background-mix: 90% !default;
@@ -64,8 +49,13 @@ $base0f: #cc6633 !default;
 
 /* next/previous buttons */
 .pagination--pager {
+  color: $text-color;
   background-color: $primary-color;
   border-color: transparent;
+
+  &:visited {
+    color: $text-color;
+  }
 }
 
 .ais-search-box .ais-search-box--input {
