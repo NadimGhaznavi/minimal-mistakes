@@ -30,6 +30,49 @@ Minimal Mistakes is a flexible two-column Jekyll theme, perfect for building per
 - [Swetrix](https://swetrix.com/) GDPR-compliant analytics support.
 - UI localized text in English (default), Arabic (عربي), Brazilian Portuguese (Português brasileiro), Bulgarian, Catalan, Chinese, Czech, Danish, Dutch, Finnish, French (Français), German (Deutsch), Greek, Hebrew, Hindi (हिंदी), Hungarian, Indonesian, Irish (Gaeilge), Italian (Italiano), Japanese, Kiswahili, Korean, Malayalam, Myanmar (Burmese), Nepali (Nepalese), Norwegian (Norsk), Persian (فارسی), Polish, Punjabi (ਪੰਜਾਬੀ), Romanian, Russian, Slovak, Spanish (Español), Swedish, Thai, Turkish (Türkçe), Ukrainian (Українська) and Vietnamese.
 
+## MyCount visitor metrics
+
+Use a revision of this theme that includes MyCount (update any pinned
+`remote_theme` revision), then add this to **each site's** `_config.yml`:
+
+```yaml
+# r3el.osoyalce.com
+mycount:
+  endpoint: "https://count.osoyalce.com:36666/"
+  site: "r3el"
+```
+
+For `ax3l.osoyalce.com`, use the same endpoint with `site: "ax3l"`.
+Labels must be fixed and non-personal. The endpoint must use HTTPS and contain
+no credentials or secrets. Rebuild and deploy each site after changing its config.
+The theme bundles the client and loads it once on pages using its layouts;
+no file copying, extra script tags, or `analytics.provider` setting is needed.
+If your site overrides `_includes/head.html`, add `{% include mycount.html %}`
+once to that override. Custom layouts must include the theme's head too.
+
+The collector must allow each site's origin, for example
+`https://r3el.osoyalce.com` and `https://ax3l.osoyalce.com`. Its CORS responses
+must allow `POST` and `Content-Type`, handle `OPTIONS`, and include
+`Access-Control-Allow-Origin` for the requesting allowed origin on the POST
+response. If your site sets a Content Security Policy, allow the collector
+origin (including port `36666`) in `connect-src` and the local client in `script-src`.
+
+**Collector prerequisite:** the current MyCount collector uses a single
+`DMyCount.ORIGIN` (default: `https://mycount.osoyalce.com`). Before enabling
+multiple sites, update and deploy the collector to accept an explicit list of
+allowed origins. Changing the theme configuration alone will otherwise produce
+`403` responses for these sites.
+
+After deployment, open browser developer tools → Network and reload a page.
+Check that `assets/js/mycount.js` loads and one page-view POST to the collector
+returns `204` (an OPTIONS preflight may appear first). The client sends the
+site label, page origin/path, browser languages, and user agent without cookies;
+it omits query strings and URL fragments. Delivery is best effort, without retries.
+
+To disable collection, remove `mycount` or leave either value empty, then rebuild.
+For local previews, you can merge an override containing `mycount: { endpoint: "" }`;
+collection otherwise runs wherever both settings are present.
+
 ## Skins (color variations)
 
 This theme comes in 11 different skins (in addition to the default one).

@@ -1,0 +1,7 @@
+{% assign mycount_endpoint = site.mycount.endpoint | default: '' | strip %}
+{% assign mycount_site = site.mycount.site | default: '' | strip %}
+{% if mycount_endpoint != '' and mycount_site != '' %}
+  <script defer src="{{ '/assets/js/mycount.js' | relative_url }}"
+          data-endpoint="{{ mycount_endpoint | escape }}"
+          data-site="{{ mycount_site | escape }}"></script>
+{% endif %}
