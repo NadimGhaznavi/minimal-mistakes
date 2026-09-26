@@ -2,7 +2,11 @@
 
 ## Unreleased
 
-No unreleased changes yet.
+### Enhancements
+
+- Render fenced Mermaid diagrams through the custom footer hook, including
+  Jekyll/Rouge code-block wrappers. Load Mermaid only on pages containing
+  diagrams, using the dark diagram theme and strict security mode.
 
 ## [4.28.1](https://github.com/mmistakes/minimal-mistakes/releases/tag/4.28.1)
 

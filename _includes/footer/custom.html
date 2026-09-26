@@ -1,3 +1,35 @@
 <!-- start custom footer snippets -->
 
+<script type="module">
+  const blocks = document.querySelectorAll(
+    'pre code.language-mermaid, .language-mermaid pre code'
+  );
+
+  if (blocks.length > 0) {
+    const { default: mermaid } = await import(
+      'https://cdn.jsdelivr.net/npm/mermaid@12/dist/mermaid.esm.min.mjs'
+    );
+
+    const diagrams = [];
+    for (const code of blocks) {
+      const diagram = document.createElement('div');
+      diagram.className = 'mermaid';
+      diagram.textContent = code.textContent;
+
+      const container =
+        code.closest('.highlighter-rouge') || code.closest('pre');
+      container.replaceWith(diagram);
+      diagrams.push(diagram);
+    }
+
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'dark',
+      securityLevel: 'strict'
+    });
+
+    await mermaid.run({ nodes: diagrams });
+  }
+</script>
+
 <!-- end custom footer snippets -->
