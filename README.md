@@ -36,13 +36,13 @@ Use a revision of this theme that includes MyCount (update any pinned
 `remote_theme` revision), then add this to **each site's** `_config.yml`:
 
 ```yaml
-# r3el.osoyalce.com
+# ax3l.osoyalce.com
 mycount:
-  endpoint: "https://count.osoyalce.com:36666/"
-  site: "r3el"
+  endpoint: "https://count.osoyalce.com/count"
+  site: "ax3l"
 ```
 
-For `ax3l.osoyalce.com`, use the same endpoint with `site: "ax3l"`.
+For `r3el.osoyalce.com`, use the same endpoint with `site: "r3el"`.
 Labels must be fixed and non-personal. The endpoint must use HTTPS and contain
 no credentials or secrets. Rebuild and deploy each site after changing its config.
 The theme bundles the client and loads it once on pages using its layouts;
@@ -55,7 +55,7 @@ The collector must allow each site's origin, for example
 must allow `POST` and `Content-Type`, handle `OPTIONS`, and include
 `Access-Control-Allow-Origin` for the requesting allowed origin on the POST
 response. If your site sets a Content Security Policy, allow the collector
-origin (including port `36666`) in `connect-src` and the local client in `script-src`.
+origin (`https://count.osoyalce.com`) in `connect-src` and the local client in `script-src`.
 
 **Collector prerequisite:** the current MyCount collector uses a single
 `DMyCount.ORIGIN` (default: `https://mycount.osoyalce.com`). Before enabling

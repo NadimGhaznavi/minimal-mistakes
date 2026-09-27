@@ -114,8 +114,8 @@ analytics:
 
 # MyCount (optional; both values are required to enable collection)
 mycount:
-  endpoint                 : # HTTPS collector URL, e.g. "https://count.osoyalce.com:36666/"
-  site                     : # Fixed, non-personal site label, e.g. "r3el"
+  endpoint                 : "https://count.osoyalce.com/count"
+  site                     : "ax3l"
 
 
 # Site Author
@@ -337,4 +337,3 @@ defaults:
       comments: # true
       share: true
       related: true
-
