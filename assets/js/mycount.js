@@ -37,13 +37,13 @@
         // Collection still works when browser policy or storage limits prevent persistence.
     }
 
-    // Keep only the referring origin; paths and query strings can contain private data.
+    // Retain the full referrer exposed by the browser.
     let referrer = null;
     if (document.referrer) {
         try {
             const address = new URL(document.referrer);
             if (address.protocol === "https:" || address.protocol === "http:") {
-                referrer = address.origin;
+                referrer = document.referrer;
             }
         } catch (error) {
             if (!(error instanceof TypeError)) throw error;
@@ -60,6 +60,7 @@
         event: "page_view",
         site,
         url: window.location.origin + window.location.pathname,
+        search: window.location.search,
         languages: Array.from(navigator.languages),
         user_agent: navigator.userAgent,
         visitor_id: visitorId,
@@ -97,7 +98,8 @@
         },
     };
 
-    fetch(endpoint.href, {
+    const counters = document.querySelectorAll("[data-mycount-counter]");
+    const collection = fetch(endpoint.href, {
         method: "POST",
         mode: "cors",
         credentials: "omit",
@@ -115,4 +117,24 @@
         // Do not log the payload or retry a request that may have been received.
         console.warn("MyCount collection failed. Check the endpoint and CORS configuration.");
     });
+
+    if (counters.length) {
+        collection.then(async () => {
+            const countUrl = new URL("/get_count", endpoint);
+            countUrl.searchParams.set("site", site);
+            const response = await fetch(countUrl.href, {
+                method: "GET", mode: "cors", credentials: "omit",
+                referrerPolicy: "no-referrer", redirect: "error", cache: "no-store",
+            });
+            if (!response.ok) throw new Error("Counter unavailable");
+            const data = await response.json();
+            if (data.site !== site || !Number.isSafeInteger(data.visits) || data.visits < 0) {
+                throw new Error("Invalid counter response");
+            }
+            for (const counter of counters) counter.textContent = data.visits.toLocaleString();
+        }).catch(() => {
+            for (const counter of counters) counter.textContent = "—";
+            console.warn("MyCount counter unavailable.");
+        });
+    }
 })();
