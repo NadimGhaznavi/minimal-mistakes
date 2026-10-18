@@ -70,6 +70,15 @@ function target(settings) {
   return moves.length ? new URL(moves[0][1]).pathname : null;
 }
 
+test("English workstation ignores previously saved Chinese", function () {
+  equal(target({locales: ["en", "zh-CN"], languages: ["en-US", "en"], saved: "zh-CN"}), null);
+});
+test("English workstation returns from Chinese page to English", function () {
+  equal(target({locales: ["en", "zh-CN"], languages: ["en-US"], url: "https://example.org/blog/zh-CN/"}), "/blog/en/");
+});
+test("Simplified Chinese workstation gets its matching translation", function () {
+  equal(target({locales: ["en", "zh-CN"], languages: ["zh-CN", "en-US"]}), "/blog/zh-CN/");
+});
 test("regional preference falls back to generic language", function () {
   equal(target(), "/blog/fr/");
 });
@@ -100,16 +109,16 @@ test("configurable default", function () {
 test("missing default leaves current page usable", function () {
   equal(target({locales: ["fr"], languages: ["it"]}), null);
 });
-test("saved choice takes precedence", function () {
-  equal(target({saved: "de"}), "/blog/de/");
+test("old saved choice does not override browser detection", function () {
+  equal(target({saved: "de"}), "/blog/fr/");
 });
-test("unavailable saved choice uses default, not browser", function () {
-  equal(target({saved: "it", url: "https://example.org/blog/fr/"}), "/blog/en/");
+test("unavailable saved choice does not override browser detection", function () {
+  equal(target({saved: "it", url: "https://example.org/blog/en/"}), "/blog/fr/");
 });
-test("URL override beats saved choice and is persisted", function () {
+test("URL override beats saved choice and browser detection", function () {
   var result = run({saved: "de", url: "https://example.org/blog/en/?mm_lang=zh-TW"});
   equal(new URL(result.moves[0][1]).pathname, "/blog/zh-TW/");
-  equal(result.saved(), "zh-TW");
+  equal(result.saved(), "de");
 });
 test("blocked storage still permits automatic detection", function () {
   equal(target({blocked: true}), "/blog/fr/");
@@ -124,10 +133,10 @@ test("query strings, base URL, and fragments survive automatic redirect", functi
   equal(run({url: "https://example.org/blog/en/?q=hello#section"}).moves,
     [["replace", "https://example.org/blog/fr/?q=hello#section"]]);
 });
-test("manual choice is saved, including the current language", function () {
+test("manual choice is explicit in the URL, including the current language", function () {
   var result = run({languages: ["en"]});
   result.change(0);
-  equal(result.saved(), "en");
+  equal(result.moves[0], ["assign", "https://example.org/blog/en/?mm_lang=en"]);
 });
 test("manual navigation preserves query and anchor", function () {
   var result = run({languages: ["en"], url: "https://example.org/blog/en/?q=x#part"});

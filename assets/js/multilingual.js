@@ -6,7 +6,6 @@
   if (!selector) return;
 
   var options = Array.prototype.slice.call(selector.options);
-  var storageKey = selector.getAttribute("data-storage-key");
   var current = new URL(window.location.href);
 
   function normalize(locale) {
@@ -29,14 +28,6 @@
     return null;
   }
 
-  function remember(locale) {
-    try {
-      window.localStorage.setItem(storageKey, locale);
-    } catch (error) {
-      // The URL override still works when storage is disabled.
-    }
-  }
-
   function destination(option) {
     var target = new URL(option.value, current);
     target.search = current.search;
@@ -47,23 +38,13 @@
   selector.addEventListener("change", function () {
     var option = selector.options[selector.selectedIndex];
     var locale = option.getAttribute("data-lang");
-    remember(locale);
     var target = destination(option);
-    // Carry the explicit choice through the redirect even without storage.
+    // Carry the explicit choice through the redirect.
     target.searchParams.set("mm_lang", locale);
     window.location.assign(target.href);
   });
 
   var preferred = current.searchParams.get("mm_lang");
-  if (preferred) {
-    remember(preferred);
-  } else {
-    try {
-      preferred = window.localStorage.getItem(storageKey);
-    } catch (error) {
-      // Browser preferences remain usable when storage is disabled.
-    }
-  }
 
   var selected = null;
   if (preferred) {

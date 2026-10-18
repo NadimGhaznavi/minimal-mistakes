@@ -254,9 +254,9 @@ the default fallback. Pages without `translation_key` are unaffected.
 After rebuilding, the masthead dropdown automatically lists the page's available
 translations. Browser preferences select an exact locale first, then an available
 language-only fallback (for example, `fr-CA` can match `fr`). If nothing matches,
-the default is English. Manual dropdown selections take precedence and are
-remembered when browser storage is available; a URL parameter preserves the
-selection when storage is blocked. Automatic detection and switching require
+the default is English. Manual dropdown selections take precedence through the `mm_lang` URL parameter.
+Visits without that parameter use browser preferences, even if a language was
+previously saved in browser storage. Automatic detection and switching require
 JavaScript, and each translation can also be visited directly at its URL.
 
 Use `locale` separately if you also want to change the theme's UI text, and

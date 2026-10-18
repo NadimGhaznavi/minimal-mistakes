@@ -93,6 +93,18 @@
     max-width: 8em;
     margin-bottom: 0;
     font-size: $type-size-6;
+    color: $text-color;
+    background-color: $background-color;
+    @if lightness($background-color) < 50% {
+      color-scheme: dark;
+    } @else {
+      color-scheme: light;
+    }
+
+    option {
+      color: $text-color;
+      background-color: $background-color;
+    }
   }
 }
 
