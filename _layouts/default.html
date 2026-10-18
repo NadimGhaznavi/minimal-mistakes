@@ -1,10 +1,14 @@
 ---
 ---
 {%- assign locale = page.locale | default: layout.locale | default: site.locale %}
+{%- assign page_lang = locale %}
+{%- if site.multilingual.enabled and page.translation_key %}
+  {%- assign page_lang = page.lang | default: site.multilingual.default_lang | default: 'en' %}
+{%- endif %}
 
 <!doctype html>
 {% include copyright.html %}
-<html lang="{{ locale | replace: '_', '-' | default: 'en' }}" class="no-js" dir="{{ page.direction | default: layout.direction | default: site.direction | default: 'ltr' }}">
+<html lang="{{ page_lang | replace: '_', '-' | default: 'en' }}" class="no-js" dir="{{ page.direction | default: layout.direction | default: site.direction | default: 'ltr' }}">
   <head>
     {% include head.html locale=locale %}
     {% include head/custom.html %}
@@ -12,7 +16,11 @@
 
   <body class="layout--{{ page.layout | default: layout.layout }}{% if page.classes or layout.classes %}{{ page.classes | default: layout.classes | join: ' ' | prepend: ' ' }}{% endif %}">
     {% include_cached skip-links.html locale=locale %}
-    {% include_cached masthead.html locale=locale %}
+    {% if site.multilingual.enabled and page.translation_key %}
+      {% include masthead.html locale=locale %}
+    {% else %}
+      {% include_cached masthead.html locale=locale %}
+    {% endif %}
 
     <div class="initial-content">
       {{ content }}

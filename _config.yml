@@ -16,6 +16,9 @@ minimal_mistakes_skin    : "default" # "air", "aqua", "contrast", "dark", "dirt"
 
 # Site Settings
 locale                   : "en-US"
+multilingual:
+  enabled                : false # opt in to page translations and browser language detection
+  default_lang           : "en"
 direction                : # "ltr" (default), "rtl" # set the direction of the page
 title                    : "Site Title"
 title_separator          : "-"

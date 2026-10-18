@@ -79,6 +79,23 @@
   }
 }
 
+.masthead__menu--multilingual {
+  min-width: 0;
+}
+
+.language-selector {
+  align-self: center;
+  flex-shrink: 0;
+  margin-inline-start: 1em;
+
+  select {
+    width: auto;
+    max-width: 8em;
+    margin-bottom: 0;
+    font-size: $type-size-6;
+  }
+}
+
 .masthead__menu-item {
   display: block;
   list-style-type: none;

@@ -1,0 +1,152 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Multilingual browser tests</title>
+<pre id="results">Running…</pre>
+<script>
+// Serve the repository root and open /test/multilingual.html to run in a browser.
+var request = new XMLHttpRequest();
+request.open("GET", "../assets/js/multilingual.js", false);
+request.send();
+var execute = new Function("window", "document", request.responseText);
+var results = [];
+
+function run(settings) {
+  settings = settings || {};
+  var locales = settings.locales || ["en", "fr", "zh-CN", "zh-TW", "de"];
+  var options = locales.map(function (lang) {
+    return {
+      value: "/blog/" + lang + "/",
+      getAttribute: function () { return lang; }
+    };
+  });
+  var listener;
+  var selector = {
+    options: options,
+    selectedIndex: 0,
+    getAttribute: function (name) {
+      return name === "data-default-lang" ? (settings.defaultLang || "en") : "mm-language:/blog";
+    },
+    addEventListener: function (name, callback) { listener = callback; }
+  };
+  var stored = settings.saved || null;
+  var moves = [];
+  var win = {
+    location: {
+      href: settings.url || "https://example.org/blog/en/",
+      replace: function (url) { moves.push(["replace", url]); },
+      assign: function (url) { moves.push(["assign", url]); }
+    },
+    navigator: settings.navigator || { languages: settings.languages || ["fr-CA", "en-US"] },
+    localStorage: {
+      getItem: function () {
+        if (settings.blocked) throw new Error("Storage blocked");
+        return stored;
+      },
+      setItem: function (key, value) {
+        if (settings.blocked) throw new Error("Storage blocked");
+        stored = value;
+      }
+    }
+  };
+  execute(win, { getElementById: function () { return settings.noSelector ? null : selector; } });
+  return {
+    moves: moves,
+    saved: function () { return stored; },
+    change: function (index) { selector.selectedIndex = index; listener(); }
+  };
+}
+
+function equal(actual, expected) {
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+    throw new Error(JSON.stringify(actual) + " !== " + JSON.stringify(expected));
+  }
+}
+function test(name, callback) {
+  try { callback(); results.push("PASS " + name); }
+  catch (error) { results.push("FAIL " + name + ": " + error.message); }
+}
+function target(settings) {
+  var moves = run(settings).moves;
+  return moves.length ? new URL(moves[0][1]).pathname : null;
+}
+
+test("regional preference falls back to generic language", function () {
+  equal(target(), "/blog/fr/");
+});
+test("exact locale wins over generic fallback", function () {
+  equal(target({locales: ["en", "fr", "fr-CA"]}), "/blog/fr-CA/");
+});
+test("browser preference order is respected", function () {
+  equal(target({languages: ["de-AT", "fr"]}), "/blog/de/");
+});
+test("later browser preferences are tried", function () {
+  equal(target({languages: ["it", "de"]}), "/blog/de/");
+});
+test("case and underscore normalization", function () {
+  equal(target({languages: ["ZH_cn"]}), "/blog/zh-CN/");
+});
+test("script parent fallback", function () {
+  equal(target({locales: ["en", "sr-Latn"], languages: ["sr-Latn-RS"]}), "/blog/sr-Latn/");
+});
+test("does not substitute a sibling Chinese locale", function () {
+  equal(target({locales: ["en", "zh-TW"], languages: ["zh-CN"], url: "https://example.org/blog/zh-TW/"}), "/blog/en/");
+});
+test("unmatched preferences use English", function () {
+  equal(target({languages: ["it"], url: "https://example.org/blog/fr/"}), "/blog/en/");
+});
+test("configurable default", function () {
+  equal(target({languages: ["it"], defaultLang: "de"}), "/blog/de/");
+});
+test("missing default leaves current page usable", function () {
+  equal(target({locales: ["fr"], languages: ["it"]}), null);
+});
+test("saved choice takes precedence", function () {
+  equal(target({saved: "de"}), "/blog/de/");
+});
+test("unavailable saved choice uses default, not browser", function () {
+  equal(target({saved: "it", url: "https://example.org/blog/fr/"}), "/blog/en/");
+});
+test("URL override beats saved choice and is persisted", function () {
+  var result = run({saved: "de", url: "https://example.org/blog/en/?mm_lang=zh-TW"});
+  equal(new URL(result.moves[0][1]).pathname, "/blog/zh-TW/");
+  equal(result.saved(), "zh-TW");
+});
+test("blocked storage still permits automatic detection", function () {
+  equal(target({blocked: true}), "/blog/fr/");
+});
+test("manual choice survives blocked storage and does not bounce", function () {
+  var result = run({blocked: true, languages: ["en"]});
+  result.change(1);
+  equal(result.moves[0], ["assign", "https://example.org/blog/fr/?mm_lang=fr"]);
+  equal(run({blocked: true, languages: ["en"], url: result.moves[0][1]}).moves, []);
+});
+test("query strings, base URL, and fragments survive automatic redirect", function () {
+  equal(run({url: "https://example.org/blog/en/?q=hello#section"}).moves,
+    [["replace", "https://example.org/blog/fr/?q=hello#section"]]);
+});
+test("manual choice is saved, including the current language", function () {
+  var result = run({languages: ["en"]});
+  result.change(0);
+  equal(result.saved(), "en");
+});
+test("manual navigation preserves query and anchor", function () {
+  var result = run({languages: ["en"], url: "https://example.org/blog/en/?q=x#part"});
+  result.change(4);
+  equal(result.moves[0], ["assign", "https://example.org/blog/de/?q=x&mm_lang=de#part"]);
+});
+test("automatic selection does not loop", function () {
+  equal(target({url: "https://example.org/blog/fr/"}), null);
+});
+test("navigator.language works without navigator.languages", function () {
+  equal(target({navigator: {language: "de-DE"}}), "/blog/de/");
+});
+test("empty browser languages use default", function () {
+  equal(target({languages: [], url: "https://example.org/blog/fr/"}), "/blog/en/");
+});
+test("pages without a selector are unaffected", function () {
+  equal(run({noSelector: true}).moves, []);
+});
+
+document.getElementById("results").textContent = results.join("\n");
+document.title = results.some(function (result) { return result.indexOf("FAIL") === 0; }) ? "FAIL" : "PASS";
+</script>

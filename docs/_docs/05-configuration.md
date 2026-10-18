@@ -89,6 +89,50 @@ Properly setting the locale is important for associating localized text found in
 **Note:** The theme comes with localized text in English (`en`, `en-US`, `en-GB`). If you change `locale` in `_config.yml` to something else, most of the UI text will go blank. Be sure to add the corresponding locale key and translated text to `_data/ui-text.yml` to avoid this.
 {: .notice--warning}
 
+### Page translations
+
+Multilingual navigation is opt-in. Enable it in `_config.yml`:
+
+```yaml
+multilingual:
+  enabled: true
+  default_lang: en
+  selector_label: Language # optional accessible dropdown label
+```
+
+Give every version of a page the same `translation_key` and its own `lang` and URL. Keep the English permalink unchanged. For example, the English file could contain:
+
+```yaml
+---
+layout: single
+title: MyCount introduction
+lang: en
+translation_key: mycount-introduction
+permalink: /mycount/introduction/
+---
+```
+
+Add a separate translated Markdown file:
+
+```yaml
+---
+layout: single
+title: MyCount 简介
+lang: zh-CN
+language_name: 简体中文 # optional dropdown label; defaults to lang
+translation_key: mycount-introduction
+permalink: /zh-CN/mycount/introduction/
+---
+```
+
+Pages, posts, and documents in output-enabled collections are discovered automatically. Use one file per locale for each key, and include the default-language version in each group. Files without `lang` use `default_lang`, which defaults to `en`. Pages without `translation_key` are unaffected. No URL prefixes are generated: assign distinct permalinks yourself or use your existing collection/post URL conventions.
+
+The masthead dropdown lists the current page's translations. Browser language preferences are tried in preference order. For each preference, matching ignores case and tries the exact locale before progressively less specific language tags (`zh-Hant-TW`, then `zh-Hant`, then `zh`). A regional translation is never substituted for another region: `zh-CN` does not match `zh-TW`. Include a language-only translation if you want that fallback. If nothing matches, visitors receive the default-language page; if that version is missing, they stay on the current page.
+
+A manual selection overrides browser detection and is remembered in local storage for this site's base URL. The `mm_lang` query parameter also carries explicit selections, so switching still works when storage is blocked. An unavailable manual language falls back to the default without discarding the saved preference. Clear the site's local storage and remove `mm_lang` from the URL to return to browser detection. Redirects preserve query strings and anchors and do not add a browser history entry.
+
+`lang` sets the translated document's HTML language. Continue using `locale` to choose the theme's UI text and `direction: rtl` for right-to-left pages as needed. Adding a language requires only another translated file; no language registry, translation service, or additional plugin is needed. Browser detection and the dropdown require JavaScript; each translation remains accessible directly at its URL without it.
+
 ### Site title
 
 The name of your site. Is used throughout the theme in places like the site masthead and `<title>` tags.

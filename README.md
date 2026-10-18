@@ -200,6 +200,70 @@ To install:
 
 For detailed instructions on how to configure, customize, add/migrate content, and more read the [theme's documentation](https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/).
 
+### Creating translations of a page
+
+Enable multilingual support in your site's `_config.yml`, then restart Jekyll:
+
+```yaml
+multilingual:
+  enabled: true
+  default_lang: en
+```
+
+Maintain each translation as a separate Markdown file. Give all versions of the
+same page an identical `translation_key`, a different `lang`, and a distinct
+`permalink`. Keep the English page's existing URL.
+
+For example, create `mycount-introduction.md` in your site's root:
+
+```markdown
+---
+layout: single
+title: MyCount introduction
+lang: en
+language_name: English
+translation_key: mycount-introduction
+permalink: /mycount/introduction/
+---
+
+Welcome to MyCount.
+```
+
+Create `mycount-introduction.zh-CN.md` alongside it:
+
+```markdown
+---
+layout: single
+title: MyCount 简介
+lang: zh-CN
+language_name: 简体中文
+translation_key: mycount-introduction
+permalink: /zh-CN/mycount/introduction/
+---
+
+欢迎使用 MyCount。
+```
+
+The filenames are your choice; `translation_key` associates the pages.
+`language_name` is an optional dropdown label and defaults to the language code.
+To add French, German, Traditional Chinese, or another language, add another file
+with the same key, its own `lang` (such as `fr`, `de`, or `zh-TW`), and a unique
+URL. Use one file per language for each key, and include an English version for
+the default fallback. Pages without `translation_key` are unaffected.
+
+After rebuilding, the masthead dropdown automatically lists the page's available
+translations. Browser preferences select an exact locale first, then an available
+language-only fallback (for example, `fr-CA` can match `fr`). If nothing matches,
+the default is English. Manual dropdown selections take precedence and are
+remembered when browser storage is available; a URL parameter preserves the
+selection when storage is blocked. Automatic detection and switching require
+JavaScript, and each translation can also be visited directly at its URL.
+
+Use `locale` separately if you also want to change the theme's UI text, and
+`direction: rtl` for right-to-left pages. See the
+[page translation configuration guide](docs/_docs/05-configuration.md#page-translations)
+for matching rules and additional options.
+
 ## Contributing
 
 Found a typo in the documentation or interested in [fixing a bug](https://github.com/mmistakes/minimal-mistakes/issues)? Then by all means [submit an issue](https://github.com/mmistakes/minimal-mistakes/issues/new) or [pull request](https://help.github.com/articles/using-pull-requests/). If this is your first pull request, it may be helpful to read up on the [GitHub Flow](https://guides.github.com/introduction/flow/) first.
