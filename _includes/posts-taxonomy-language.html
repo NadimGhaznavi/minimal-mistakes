@@ -17,7 +17,26 @@
     {%- assign taxonomy_names = taxonomy_names | push: entry.category -%}
   {%- endif -%}
 {%- endfor -%}
-{%- assign archive_entries = archive_entries | sort: 'date' | reverse -%}
+{%- comment -%}
+Posts and dated pages may expose different underlying Ruby date types.
+Jekyll 3.x cannot reliably sort the combined objects with sort: 'date'.
+Build consistently formatted sortable keys, then recover the original entries
+so layouts still receive full page/post objects.
+{%- endcomment -%}
+{%- assign sort_keys = '' | split: ',' -%}
+{%- for entry in archive_entries -%}
+  {%- assign date_key = entry.date | date: '%Y%m%d%H%M%S' -%}
+  {%- assign index_key = forloop.index0 | prepend: '00000000' | slice: -8, 8 -%}
+  {%- assign sort_key = date_key | append: ':' | append: index_key -%}
+  {%- assign sort_keys = sort_keys | push: sort_key -%}
+{%- endfor -%}
+{%- assign sort_keys = sort_keys | sort | reverse -%}
+{%- assign ordered_entries = '' | split: ',' -%}
+{%- for sort_key in sort_keys -%}
+  {%- assign entry_index = sort_key | split: ':' | last | plus: 0 -%}
+  {%- assign ordered_entries = ordered_entries | push: archive_entries[entry_index] -%}
+{%- endfor -%}
+{%- assign archive_entries = ordered_entries -%}
 {%- assign taxonomy_names = taxonomy_names | uniq | sort_natural -%}
 {%- assign entries_layout = page.entries_layout | default: 'list' -%}
 {%- assign items_max = archive_entries.size -%}
@@ -27,11 +46,15 @@
 {%- endcapture -%}
 {%- for count in (1..items_max) reversed -%}
   {%- for taxonomy_name in taxonomy_names -%}
-    {%- if taxonomy_field == 'categories' -%}
-      {%- assign taxonomy_entries = archive_entries | where_exp: 'entry', 'entry.categories contains taxonomy_name or entry.category == taxonomy_name' -%}
-    {%- else -%}
-      {%- assign taxonomy_entries = archive_entries | where_exp: 'entry', 'entry.tags contains taxonomy_name' -%}
-    {%- endif -%}
+    {%- assign taxonomy_entries = '' | split: ',' -%}
+    {%- for entry in archive_entries -%}
+      {%- assign entry_terms = entry[taxonomy_field] -%}
+      {%- if entry_terms contains taxonomy_name -%}
+        {%- assign taxonomy_entries = taxonomy_entries | push: entry -%}
+      {%- elsif taxonomy_field == 'categories' and entry.category == taxonomy_name -%}
+        {%- assign taxonomy_entries = taxonomy_entries | push: entry -%}
+      {%- endif -%}
+    {%- endfor -%}
     {%- if taxonomy_entries.size != count -%}{%- continue -%}{%- endif -%}
     {%- capture index_item -%}
       <li><a href="#{{ taxonomy_name | slugify }}"><strong>{{ taxonomy_name }}</strong> <span class="taxonomy__count">{{ count }}</span></a></li>
