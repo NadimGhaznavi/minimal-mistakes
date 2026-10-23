@@ -70,13 +70,14 @@ so layouts still receive full page/post objects.
       {%- endif -%}
     {%- endfor -%}
     {%- if taxonomy_entries.size != count -%}{%- continue -%}{%- endif -%}
+    {%- capture translated_taxonomy_name -%}{%- include taxonomy-label.html taxonomy=taxonomy_field term=taxonomy_name lang=current_lang -%}{%- endcapture -%}
     {%- capture index_item -%}
-      <li><a href="#{{ taxonomy_name | slugify }}"><strong>{{ taxonomy_name }}</strong> <span class="taxonomy__count">{{ count }}</span></a></li>
+      <li><a href="#{{ taxonomy_name | slugify }}"><strong>{{ translated_taxonomy_name | escape }}</strong> <span class="taxonomy__count">{{ count }}</span></a></li>
     {%- endcapture -%}
     {%- assign taxonomy_index = taxonomy_index | append: index_item -%}
     {%- capture section -%}
       <section id="{{ taxonomy_name | slugify }}" class="taxonomy__section">
-        <h2 class="archive__subtitle">{{ taxonomy_name }}</h2>
+        <h2 class="archive__subtitle">{{ translated_taxonomy_name | escape }}</h2>
         <div class="entries-{{ entries_layout }}">
           {%- for post in taxonomy_entries -%}
             {% include archive-single.html locale=locale type=entries_layout %}
