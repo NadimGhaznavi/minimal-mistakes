@@ -1,0 +1,37 @@
+{%- comment -%}
+Resolve an optional display-only taxonomy translation.
+The canonical tag/category is never changed, and callers must still use it
+for taxonomy matching, slugs, links, and counts.
+
+Data: _data/taxonomy_translations.yml
+  zh-CN:
+    tags:
+      "Machine Learning": "机器学习"
+    categories:
+      journal: "日志"
+{%- endcomment -%}
+{%- assign taxonomy_display_label = include.term -%}
+{%- if site.multilingual.enabled and site.data.taxonomy_translations and include.term and include.taxonomy -%}
+  {%- assign taxonomy_requested_lang = include.lang | default: page.lang | default: site.multilingual.default_lang | default: 'en' | replace: '_', '-' | downcase -%}
+  {%- assign taxonomy_base_lang = taxonomy_requested_lang | split: '-' | first -%}
+  {%- assign taxonomy_exact_labels = nil -%}
+  {%- assign taxonomy_base_labels = nil -%}
+  {%- for taxonomy_language in site.data.taxonomy_translations -%}
+    {%- assign taxonomy_language_code = taxonomy_language[0] | replace: '_', '-' | downcase -%}
+    {%- if taxonomy_language_code == taxonomy_requested_lang -%}
+      {%- assign taxonomy_exact_labels = taxonomy_language[1] -%}
+    {%- elsif taxonomy_language_code == taxonomy_base_lang -%}
+      {%- assign taxonomy_base_labels = taxonomy_language[1] -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- assign taxonomy_exact_terms = taxonomy_exact_labels[include.taxonomy] -%}
+  {%- assign taxonomy_translation = taxonomy_exact_terms[include.term] -%}
+  {%- if taxonomy_translation == nil or taxonomy_translation == '' -%}
+    {%- assign taxonomy_base_terms = taxonomy_base_labels[include.taxonomy] -%}
+    {%- assign taxonomy_translation = taxonomy_base_terms[include.term] -%}
+  {%- endif -%}
+  {%- if taxonomy_translation and taxonomy_translation != '' -%}
+    {%- assign taxonomy_display_label = taxonomy_translation -%}
+  {%- endif -%}
+{%- endif -%}
+{{- taxonomy_display_label -}}
