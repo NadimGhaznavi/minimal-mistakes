@@ -62,7 +62,10 @@ so layouts still receive full page/post objects.
       {%- elsif entry_terms == taxonomy_name -%}
         {%- assign term_matches = true -%}
       {%- endif -%}
-      {%- if term_matches or taxonomy_field == 'categories' and entry.category == taxonomy_name -%}
+      {%- if taxonomy_field == 'categories' and entry.category == taxonomy_name -%}
+        {%- assign term_matches = true -%}
+      {%- endif -%}
+      {%- if term_matches -%}
         {%- assign taxonomy_entries = taxonomy_entries | push: entry -%}
       {%- endif -%}
     {%- endfor -%}
