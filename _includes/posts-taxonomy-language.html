@@ -11,8 +11,12 @@
   {%- unless entry.date -%}{%- continue -%}{%- endunless -%}
   {%- assign archive_entries = archive_entries | push: entry -%}
   {%- assign entry_terms = entry[taxonomy_field] -%}
-  {%- if entry_terms -%}
-    {%- assign taxonomy_names = taxonomy_names | concat: entry_terms -%}
+  {%- if entry_terms and entry_terms.size > 0 -%}
+    {%- if entry_terms.first -%}
+      {%- assign taxonomy_names = taxonomy_names | concat: entry_terms -%}
+    {%- else -%}
+      {%- assign taxonomy_names = taxonomy_names | push: entry_terms -%}
+    {%- endif -%}
   {%- elsif taxonomy_field == 'categories' and entry.category -%}
     {%- assign taxonomy_names = taxonomy_names | push: entry.category -%}
   {%- endif -%}
@@ -34,7 +38,8 @@ so layouts still receive full page/post objects.
 {%- assign ordered_entries = '' | split: ',' -%}
 {%- for sort_key in sort_keys -%}
   {%- assign entry_index = sort_key | split: ':' | last | plus: 0 -%}
-  {%- assign ordered_entries = ordered_entries | push: archive_entries[entry_index] -%}
+  {%- assign indexed_entry = archive_entries[entry_index] -%}
+  {%- assign ordered_entries = ordered_entries | push: indexed_entry -%}
 {%- endfor -%}
 {%- assign archive_entries = ordered_entries -%}
 {%- assign taxonomy_names = taxonomy_names | uniq | sort_natural -%}
@@ -49,9 +54,15 @@ so layouts still receive full page/post objects.
     {%- assign taxonomy_entries = '' | split: ',' -%}
     {%- for entry in archive_entries -%}
       {%- assign entry_terms = entry[taxonomy_field] -%}
-      {%- if entry_terms contains taxonomy_name -%}
-        {%- assign taxonomy_entries = taxonomy_entries | push: entry -%}
-      {%- elsif taxonomy_field == 'categories' and entry.category == taxonomy_name -%}
+      {%- assign term_matches = false -%}
+      {%- if entry_terms.first -%}
+        {%- if entry_terms contains taxonomy_name -%}
+          {%- assign term_matches = true -%}
+        {%- endif -%}
+      {%- elsif entry_terms == taxonomy_name -%}
+        {%- assign term_matches = true -%}
+      {%- endif -%}
+      {%- if term_matches or taxonomy_field == 'categories' and entry.category == taxonomy_name -%}
         {%- assign taxonomy_entries = taxonomy_entries | push: entry -%}
       {%- endif -%}
     {%- endfor -%}
