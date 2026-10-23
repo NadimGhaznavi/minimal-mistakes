@@ -343,6 +343,42 @@ because local files override theme templates.
 See the [translated archive configuration guide](docs/_docs/05-configuration.md#translated-tag-and-category-archives)
 for more detail.
 
+### Translating tag and category names
+
+Tags and categories remain **canonical identifiers** in front matter, archive
+grouping, counts, and link fragments. To translate only their visible labels,
+create an optional `_data/taxonomy_translations.yml` in the consuming site:
+
+```yaml
+zh-CN:
+  tags:
+    "Machine Learning": "机器学习"
+    "Media Management": "媒体资料管理"
+  categories:
+    journal: "日志"
+```
+
+On a Chinese post, `Machine Learning` displays as `机器学习`, but it
+still links to the canonical `#machine-learning` anchor. The translated
+archive's index and section heading use the same label. Do not translate
+`tags`, `categories`, or `category` in post front matter merely to change
+their displayed language.
+
+This is opt-in: the theme needs `multilingual.enabled: true` and the YAML
+dictionary; no dictionary means the original names are shown. Language keys
+match `page.lang` case-insensitively, treating hyphens and underscores alike.
+An exact locale (`zh-CN`) takes precedence over a language-only (`zh`)
+fallback, resolved per term. Missing or empty translations fall back to the
+canonical name. Tag and category names are **case-sensitive** keys, so provide
+exact front-matter spelling. Product names or technical acronyms can be omitted
+to retain their original spelling.
+
+The same lookup is used in multilingual tag/category archive indexes and
+headings and in the tag/category links at the bottom of posts. This feature
+does not change slugs, permalinks, URL fragments, document membership, or
+archive counts. Other sites using the theme can supply their own dictionary
+without editing the theme or duplicating includes.
+
 ### Translating the author profile sidebar
 
 Enable `multilingual.enabled` as above, then add language overrides under your
