@@ -343,6 +343,53 @@ because local files override theme templates.
 See the [translated archive configuration guide](docs/_docs/05-configuration.md#translated-tag-and-category-archives)
 for more detail.
 
+### Translating the author profile sidebar
+
+Enable `multilingual.enabled` as above, then add language overrides under your
+existing `author` in `_config.yml`. Base fields provide the default content:
+
+```yaml
+author:
+  name: Your Name
+  bio: Creator
+  location: Hamilton, ON
+  avatar: /assets/images/bio-photo.jpg
+  links:
+    - label: My Website
+      icon: fas fa-fw fa-link
+      url: https://example.com/
+  translations:
+    zh-CN:
+      name: Your Name # replace with your preferred translated name
+      bio: Creator # translate this placeholder
+      location: Hamilton, ON # translate this placeholder
+      home: /zh-CN/
+      links:
+        - label: My Website # translate this placeholder
+          icon: fas fa-fw fa-link
+          url: https://example.com/
+```
+
+The sidebar selects overrides using the page's `lang`. Language keys ignore
+case and treat underscores as hyphens. Pages without `lang` use
+`multilingual.default_lang`. Supported overrides are `name`, `bio`, `location`,
+`avatar`, `home`, and `links`. Missing or empty fields fall back to the base
+profile. The biography still supports Markdown. A translated `links` array
+replaces the entire base array, so include every link you want displayed with
+its label, URL, and optional icon. Email and legacy social usernames continue
+to use the base profile.
+
+For named authors, put the same `translations` block inside the author's record
+in `_data/authors.yml`; existing `author` and `authors` front matter still select
+the profile. Set `locale: zh-CN` on Chinese pages to select built-in sidebar
+labels such as Follow and Email from `_data/ui-text.yml`. Keep
+`author_profile: true` enabled on the relevant pages or in front matter defaults.
+
+Restart Jekyll after changing `_config.yml`, then rebuild. If your site has its
+own `_includes/author-profile.html`, update that override too; local includes
+take precedence over the theme. Sites without multilingual support or without
+author translations keep their existing profile content.
+
 ## Contributing
 
 Found a typo in the documentation or interested in [fixing a bug](https://github.com/mmistakes/minimal-mistakes/issues)? Then by all means [submit an issue](https://github.com/mmistakes/minimal-mistakes/issues/new) or [pull request](https://help.github.com/articles/using-pull-requests/). If this is your first pull request, it may be helpful to read up on the [GitHub Flow](https://guides.github.com/introduction/flow/) first.

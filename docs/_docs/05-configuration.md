@@ -1006,6 +1006,40 @@ author:
       url: "https://instagram.com/mmistakes"
 ```
 
+### Translated author profiles
+
+When `multilingual.enabled` is true, the author sidebar reads optional
+`translations` from the selected author (`site.author` or a record in
+`_data/authors.yml`). Keys match the page's `lang`, ignoring case and treating
+underscores as hyphens. Missing `lang` uses `multilingual.default_lang`.
+
+```yaml
+author:
+  name: Your Name
+  bio: Creator
+  location: Hamilton, ON
+  translations:
+    zh-CN:
+      name: Your Name # translate as needed
+      bio: Creator # translate as needed
+      location: Hamilton, ON # translate as needed
+      home: /zh-CN/
+```
+
+Override `name`, `bio`, `location`, `avatar`, `home`, and `links`. Each missing or
+empty field falls back to its base value. Translated `links` replace the complete
+array; supply the label, URL, and optional icon for every desired link. Other
+author fields, including email and legacy social usernames, stay on the base
+profile. Biography Markdown works in each language. Unavailable languages use
+the base profile, and disabling multilingual support ignores overrides.
+
+Use the page's `locale` for built-in labels such as Follow, Website, and Email.
+The author selection and `author_profile: true` settings work as before. Restart
+Jekyll after editing `_config.yml`, and update any local author-profile include
+that overrides the theme. See the
+[README author example](https://github.com/NadimGhaznavi/minimal-mistakes#translating-the-author-profile-sidebar)
+for a complete translated links example.
+
 To customize the author sidebar, read the full [layout documentation]({{ "/docs/layouts/#author-profile" | relative_url }}).
 
 ## Site footer
