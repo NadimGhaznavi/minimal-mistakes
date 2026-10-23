@@ -1,3 +1,6 @@
+{% if site.multilingual.enabled and include.taxonomy_field %}
+  {% include posts-taxonomy-language.html locale=include.locale taxonomy_field=include.taxonomy_field %}
+{% else %}
 {% assign locale = include.locale | default: site.locale %}
 {% assign items_max = 0 %}
 {% for item in include.taxonomies %}
@@ -36,3 +39,4 @@
     {% endif %}
   {% endfor %}
 {% endfor %}
+{% endif %}

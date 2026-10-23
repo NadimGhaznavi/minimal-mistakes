@@ -1338,3 +1338,25 @@ compress_html:
 
 **Note:** CDN services such as CloudFlare provide optional automatic minification for HTML, CSS, and JavaScript. If you are serving your site via such a service and have minification enabled, this configuration might be redundant.
 {: .notice--info}
+
+#### Translated tag and category archives
+
+With multilingual navigation enabled, the `tags` and `categories` layouts list dated posts and pages in the archive page's language. Entries without `lang` use `multilingual.default_lang`. Hidden entries are excluded. Translated pages should carry their own `date` and `tags` or `categories` metadata; the singular `category` field is also supported. Counts and sections use only entries in that language, including taxonomy terms found only on translated pages.
+
+Create an archive page for each language and taxonomy. For example:
+
+```yaml
+---
+title: Posts by Tag # translate as needed
+layout: tags
+lang: zh-CN
+locale: zh-CN
+language_name: 简体中文
+translation_key: tags-archive
+permalink: /zh-CN/tags/
+---
+```
+
+Give the English tags page `lang: en` and the same `translation_key`. For categories, use `layout: categories`, a separate shared key such as `categories-archive`, and a distinct permalink such as `/zh-CN/categories/`.
+
+For Liquid archives, tag and category links discover the archive page with the corresponding layout and language, respecting its permalink and the site's `baseurl`. Create one archive page per layout and language. If no matching archive exists, links use the configured `tag_archive.path` or `category_archive.path`. Multilingual navigation does not generate archive pages. Sites without multilingual navigation and sites using `jekyll-archives` retain their configured link paths.
