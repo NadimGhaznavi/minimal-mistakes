@@ -268,6 +268,81 @@ Use `locale` separately if you also want to change the theme's UI text, and
 [page translation configuration guide](docs/_docs/05-configuration.md#page-translations)
 for matching rules and additional options.
 
+### Creating multilingual tag and category archives
+
+Create two Markdown archive pages in your site for each language. Jekyll builds
+these files into HTML using their `layout`, `lang`, and `permalink`; the theme
+does not create the source files automatically. Enable multilingual support as
+shown above and configure Liquid archives in `_config.yml`:
+
+```yaml
+tag_archive:
+  type: liquid
+  path: /tags/
+category_archive:
+  type: liquid
+  path: /categories/
+```
+
+For example, create `pages/tags.md`:
+
+```yaml
+---
+title: Posts by Tag
+layout: tags
+lang: en
+locale: en-US
+language_name: English
+translation_key: tags-archive
+permalink: /tags/
+---
+```
+
+Then create `zh-CN/tags.md` with an English placeholder title ready to translate:
+
+```yaml
+---
+title: Posts by Tag
+layout: tags
+lang: zh-CN
+locale: zh-CN
+language_name: 简体中文
+translation_key: tags-archive
+permalink: /zh-CN/tags/
+---
+```
+
+Create the category pages with the same structure, using these values:
+
+| Source file | Layout | Language | Translation key | Permalink |
+| --- | --- | --- | --- | --- |
+| `pages/categories.md` | `categories` | `en` | `categories-archive` | `/categories/` |
+| `zh-CN/categories.md` | `categories` | `zh-CN` | `categories-archive` | `/zh-CN/categories/` |
+
+Use a category-specific title such as `Posts by Category`, and set `locale` and
+`language_name` for each language as in the tags examples. Matching
+`translation_key` values connect each archive's language-selector options.
+
+During each build, these layouts gather dated posts and pages in the archive's
+language, then generate the taxonomy index, counts, and article lists. Translated
+pages need their own `date` and `tags` or `categories` metadata; singular `category`
+is also supported. Entries without `lang` use `multilingual.default_lang`, and
+hidden entries are excluded.
+
+Each tag or category becomes an anchored section, for example
+`/zh-CN/tags/#aquaponics`. Adding a term adds a section on the next build; it does
+not require another Markdown file. Adding a language requires its two archive
+pages. Keep source files outside directories excluded from Jekyll's build.
+
+Tag and category links find the archive with the matching layout and language,
+respecting custom permalinks and `baseurl`. Create one archive per layout and
+language. If a matching archive is missing, links fall back to the configured
+archive path. Keep copied site layouts and includes in sync with the theme,
+because local files override theme templates.
+
+See the [translated archive configuration guide](docs/_docs/05-configuration.md#translated-tag-and-category-archives)
+for more detail.
+
 ## Contributing
 
 Found a typo in the documentation or interested in [fixing a bug](https://github.com/mmistakes/minimal-mistakes/issues)? Then by all means [submit an issue](https://github.com/mmistakes/minimal-mistakes/issues/new) or [pull request](https://help.github.com/articles/using-pull-requests/). If this is your first pull request, it may be helpful to read up on the [GitHub Flow](https://guides.github.com/introduction/flow/) first.
