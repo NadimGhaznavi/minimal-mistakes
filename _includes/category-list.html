@@ -27,7 +27,8 @@
     <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> {{ site.data.ui-text[locale].categories_label | default: "Categories:" }} </strong>
     <span itemprop="keywords">
     {% for category_word in categories_sorted %}
-      <a href="{{ category_word | slugify | prepend: path_type | prepend: taxonomy_archive_path | relative_url }}" class="page__taxonomy-item p-category" rel="tag">{{ category_word }}</a>{% unless forloop.last %}<span class="sep">, </span>{% endunless %}
+      {%- capture translated_category -%}{%- include taxonomy-label.html taxonomy='categories' term=category_word -%}{%- endcapture -%}
+      <a href="{{ category_word | slugify | prepend: path_type | prepend: taxonomy_archive_path | relative_url }}" class="page__taxonomy-item p-category" rel="tag">{{ translated_category | escape }}</a>{% unless forloop.last %}<span class="sep">, </span>{% endunless %}
     {% endfor %}
     </span>
   </p>
