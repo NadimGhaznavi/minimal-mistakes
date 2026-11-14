@@ -15,6 +15,8 @@
 - Render fenced Mermaid diagrams through the custom footer hook, including
   Jekyll/Rouge code-block wrappers. Load Mermaid only on pages containing
   diagrams, using the dark diagram theme and strict security mode.
+- Document Mermaid code fences and add a sample page. Pin the Mermaid version
+  and preserve diagram source when the CDN or an individual diagram fails.
 
 ## [4.28.1](https://github.com/mmistakes/minimal-mistakes/releases/tag/4.28.1)
 

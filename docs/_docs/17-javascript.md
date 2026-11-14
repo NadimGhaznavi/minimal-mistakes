@@ -48,6 +48,35 @@ after_footer_scripts:
 **Note:** If you assign `footer_scripts` the theme's `/assets/js/main.min.js` file will be deactivated. This script includes jQuery and various other plugins that you'll need to find replacements for and include separately.
 {: .notice--warning}
 
+## Mermaid diagrams
+
+The theme renders [Mermaid](https://mermaid.js.org/) diagrams from fenced code
+blocks. Set the code block's language to `mermaid`:
+
+````markdown
+```mermaid
+flowchart LR
+  A[Write Markdown] --> B[Build with Jekyll]
+  B --> C[Render diagram in the browser]
+```
+````
+
+No front matter setting or additional Jekyll plugin is required. The renderer
+handles both plain code fences and Jekyll/Rouge wrappers, and leaves other code
+blocks unchanged. Mermaid is loaded from jsDelivr only when a page contains a
+diagram. Diagrams use the dark theme and strict security mode, which disables
+click handlers and encodes HTML in labels.
+
+If Mermaid cannot load or a diagram contains invalid syntax, the original code
+block remains visible. Errors are reported in the browser console, and other
+valid diagrams can still render.
+
+The renderer lives in `_includes/footer/custom.html`. If your site overrides
+that include, retain the Mermaid script from the theme's version. If your site
+uses a Content Security Policy, allow `https://cdn.jsdelivr.net` in `script-src`
+for Mermaid and its modules. Diagram rendering requires JavaScript and access
+to that CDN; no extra JavaScript build step is needed.
+
 ---
 
 ## Build process

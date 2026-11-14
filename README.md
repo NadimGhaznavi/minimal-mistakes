@@ -34,6 +34,27 @@ Minimal Mistakes is a flexible two-column Jekyll theme, perfect for building per
 - [Swetrix](https://swetrix.com/) GDPR-compliant analytics support.
 - UI localized text in English (default), Arabic (عربي), Brazilian Portuguese (Português brasileiro), Bulgarian, Catalan, Chinese, Czech, Danish, Dutch, Finnish, French (Français), German (Deutsch), Greek, Hebrew, Hindi (हिंदी), Hungarian, Indonesian, Irish (Gaeilge), Italian (Italiano), Japanese, Kiswahili, Korean, Malayalam, Myanmar (Burmese), Nepali (Nepalese), Norwegian (Norsk), Persian (فارسی), Polish, Punjabi (ਪੰਜਾਬੀ), Romanian, Russian, Slovak, Spanish (Español), Swedish, Thai, Turkish (Türkçe), Ukrainian (Українська) and Vietnamese.
 
+## Mermaid diagrams
+
+Write diagrams in Markdown using a fenced code block with the `mermaid` language:
+
+````markdown
+```mermaid
+flowchart LR
+  A[Write Markdown] --> B[Build with Jekyll]
+  B --> C[Render diagram in the browser]
+```
+````
+
+No front matter setting or Jekyll plugin is needed. The theme loads Mermaid from
+jsDelivr only on pages containing Mermaid code blocks, then renders them using
+the dark diagram theme and strict security mode. If the library cannot load or a
+diagram has invalid syntax, its source remains visible as a code block.
+
+Sites that override `_includes/footer/custom.html` must retain the Mermaid
+script from this theme's version of that file. A Content Security Policy must
+allow `https://cdn.jsdelivr.net` in `script-src` to load Mermaid and its modules.
+
 ## MyCount visitor metrics
 
 Use a revision of this theme that includes MyCount (update any pinned
